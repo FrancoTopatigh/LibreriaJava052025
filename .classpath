@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="EjercicioLibreria11052025/src"/>
+	<classpathentry kind="src" path="EjercicioLibreria11052025/test"/>
+	<classpathentry kind="output" path="EjercicioLibreria11052025/bin"/>
+</classpath>
