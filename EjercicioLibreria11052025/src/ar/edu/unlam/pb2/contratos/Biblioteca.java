@@ -18,9 +18,10 @@ public interface Biblioteca {
 	Libro buscarLibroPorISBN(Long ISBN);
 	Usuario buscarUsuarioPorDni(Integer dni);
 	Set<Libro> obtenerListaConLibrosFiccion();
-	Boolean alquilarLibro(Integer dni, Long ISBN) throws LibroNoEncontradoException, UsuarioNoEncontradoException;
+	Boolean alquilarLibro(Integer dni, Long ISBN, Integer diasPrestamo) throws LibroNoEncontradoException, UsuarioNoEncontradoException;
 	Boolean devolverLibro(Integer dni, Long isbn) throws LibroNoEncontradoException, UsuarioNoEncontradoException;
 	List<Prestamo> obtenerLibrosPrestadosPorUsuario(Integer dni);
+	Set<Prestamo> obtenerPrestamosAtrasados();
 	
 	
 }
