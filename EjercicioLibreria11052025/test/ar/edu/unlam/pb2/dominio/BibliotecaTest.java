@@ -199,5 +199,54 @@ public class BibliotecaTest {
 		
 	}
 	
+	@Test
+	public void dadoQueTengoUnaBibliotecaPuedoObtenerLosPrestamosEnFecha() throws LibroRepetidoException, UsuarioRepetidoException, LibroNoEncontradoException, UsuarioNoEncontradoException {
+		Libro libro1 = new Ficcion("Los demonios", "Fiodor Dostoevsky", 930, 26500.0, 909873L, true, "Novela", false);
+		Libro libro2 = new NoFiccion("Mitos Nordicos", "Neil Gaiman", 300, 23000.0, 897342L, true, "Mitologia", false);
+		Usuario usuario1 = new Usuario(87921, "Nicolas");
+		Usuario usuario2 = new Usuario(79810, "Laura");
+		
+		biblioteca.agregarLibro(libro1);
+		biblioteca.agregarLibro(libro2);
+		biblioteca.agregarUsuario(usuario1);
+		biblioteca.agregarUsuario(usuario2);
+		biblioteca.alquilarLibro(usuario1.getDni(), libro1.getISBN(), 30, LocalDate.of(2025, 05, 01));
+		biblioteca.alquilarLibro(usuario2.getDni(), libro2.getISBN(), 30, LocalDate.of(2025, 05, 10));
+		
+		Set<Prestamo> obtenerPrestamosEnFecha = biblioteca.obtenerPrestamosEnFecha(LocalDate.of(2025, 05, 10));
+		Integer prestamosEnFechaEsperados = 1;
+		
+		assertEquals(prestamosEnFechaEsperados,obtenerPrestamosEnFecha.size(),0.0);
+	}
+	
+	@Test
+	public void dadoQueTengoUnaBibliotecaCuandoUnLibroEstaAtrasadoPuedoCalcularUnaMultaEnBaseALosDiasDeAtraso() throws LibroRepetidoException, UsuarioRepetidoException, LibroNoEncontradoException, UsuarioNoEncontradoException {
+		Libro libro1 = new Ficcion("La Nausea", "Jean-Paul Sartre", 290, 20000.0, 998326L, true, "Novela filosofica", false);
+		Libro libro2 = new Ficcion("Frankestein", "Mary Shelley", 275, 14500.0, 979501L, true, "Novela", false);
+		Usuario usuario1 = new Usuario(87921, "Diego");
+		Usuario usuario2 = new Usuario(79810, "Stefania");
+		Prestamo prestamo1 = new Prestamo(libro1, usuario1, LocalDate.of(2025, 05, 01), null, 30);
+		Prestamo prestamo2 = new Prestamo(libro2, usuario2, LocalDate.of(2025, 04, 10), null, 30);
+		
+		biblioteca.agregarLibro(libro1);
+		biblioteca.agregarLibro(libro2);
+		biblioteca.agregarUsuario(usuario1);
+		biblioteca.agregarUsuario(usuario2);
+		biblioteca.alquilarLibro(usuario1.getDni(), libro1.getISBN(), 30, LocalDate.of(2025, 05, 01));
+		biblioteca.alquilarLibro(usuario2.getDni(), libro2.getISBN(), 30, LocalDate.of(2025, 04, 10));
+		
+		Double multaLibro1 = biblioteca.calcularMulta(prestamo1);
+		Double multaLibro2 = biblioteca.calcularMulta(prestamo2);
+		
+		Double multa1Esperada = 0.0;
+		Double multa2Esperada = 1480.0;
+		
+		assertEquals(multa1Esperada, multaLibro1);
+		assertEquals(multa2Esperada, multaLibro2);
+		
+		
+		
+	}
+	
 	
 }
