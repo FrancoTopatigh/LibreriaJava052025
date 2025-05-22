@@ -1,5 +1,6 @@
 package ar.edu.unlam.pb2.contratos;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,8 @@ public interface Biblioteca {
 	Boolean devolverLibro(Integer dni, Long isbn) throws LibroNoEncontradoException, UsuarioNoEncontradoException;
 	List<Prestamo> obtenerLibrosPrestadosPorUsuario(Integer dni);
 	Set<Prestamo> obtenerPrestamosAtrasados();
+	Set<Prestamo> obtenerPrestamosEnFecha(LocalDate fecha);
+	Double calcularMulta(Prestamo prestamo);
 	
 	
 }

@@ -205,8 +205,41 @@ public class BibliotecaImpl implements Biblioteca {
 	}
 
 
+	@Override
+	public Set<Prestamo> obtenerPrestamosEnFecha(LocalDate fecha) {
+		Set<Prestamo> obtenerPrestamos = new HashSet<>();
+		
+		for(Prestamo p : this.prestamos) {
+			if(p.getFechaPrestamo().equals(fecha) ||  (p.getFechaDevolucion() != null && p.getFechaDevolucion().equals(fecha))) {
+				obtenerPrestamos.add(p);
+			}
+		}
+		
+		return obtenerPrestamos;
+	}
 
-	
+
+	@Override
+	public Double calcularMulta(Prestamo prestamo) {
+		Double multaBase = 1000.0;
+		Double interesMulta = 40.0;
+		
+		if(prestamo.getFechaDevolucion() != null) {
+			return 0.0;
+ 		} 
+		
+		if(prestamo.getFechaDevolucion() == null) {
+			LocalDate fechaLimite = prestamo.getFechaPrestamo().plusDays(prestamo.getDiasPrestamo());
+			if(fechaLimite.isBefore(LocalDate.now())) {
+				Integer diasDeAtraso = (int) ChronoUnit.DAYS.between(fechaLimite, LocalDate.now());
+				Double multaPorAtraso = multaBase + (diasDeAtraso * interesMulta);
+				return multaPorAtraso;
+			}
+		}
+		
+		return 0.0;
+	}
+
 
 
 	
