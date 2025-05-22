@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import ar.edu.unlam.pb2.contratos.Biblioteca;
 import ar.edu.unlam.pb2.entidades.Ficcion;
@@ -51,6 +53,7 @@ public class BibliotecaImpl implements Biblioteca {
 	}
 
 
+	
 	@Override
 	public Libro buscarLibroPorISBN(Long ISBN) {
 		
@@ -93,7 +96,7 @@ public class BibliotecaImpl implements Biblioteca {
 
 
 	@Override
-	public Boolean alquilarLibro(Integer dni, Long ISBN) throws LibroNoEncontradoException, UsuarioNoEncontradoException {
+	public Boolean alquilarLibro(Integer dni, Long ISBN, Integer diasPrestamo) throws LibroNoEncontradoException, UsuarioNoEncontradoException {
 		
 		//TODO: Las fechas deberían ser dinámicas (LocalDate.now() + días).
 		// Podrías validar si el usuario ya tiene ese libro prestado o un límite de libros, si decidís agregar esa regla
@@ -101,6 +104,7 @@ public class BibliotecaImpl implements Biblioteca {
 		
 		Libro libro = buscarLibroPorISBN(ISBN);
 		Usuario usuario = buscarUsuarioPorDni(dni);
+		
 		
 		if(libro == null) {
 			throw new LibroNoEncontradoException("Libro no encontrado");
@@ -114,7 +118,7 @@ public class BibliotecaImpl implements Biblioteca {
 			throw new UsuarioNoEncontradoException("Usuario no encontrado");
 		}
 		
-		Prestamo nuevoPrestamo = new Prestamo(libro, usuario, LocalDate.of(2025, 05, 12), LocalDate.of(2025, 06, 12),30);
+		Prestamo nuevoPrestamo = new Prestamo(libro, usuario, LocalDate.now(), null , diasPrestamo);
 		libro.setEstaDisponible(false);
 		return prestamos.add(nuevoPrestamo);
 	}
@@ -159,6 +163,48 @@ public class BibliotecaImpl implements Biblioteca {
 		
 		return librosPrestados;
 	}
+
+
+	@Override
+	public Set<Prestamo> obtenerPrestamosAtrasados() {
+		Set<Prestamo> prestamosAtrasados = new HashSet<>();
+		
+		for(Prestamo p : this.prestamos) {
+			if(p.getFechaDevolucion() == null) {
+				LocalDate fechaLimite = p.getFechaPrestamo().plusDays(p.getDiasPrestamo());
+				if(fechaLimite.isBefore(LocalDate.now())) {
+					prestamosAtrasados.add(p);
+				}
+			}
+		}
+		
+		return prestamosAtrasados;
+	}
+
+
+	public Boolean alquilarLibro(Integer dni, Long isbn, Integer diasPrestamo, LocalDate fechaInicio) throws LibroNoEncontradoException, UsuarioNoEncontradoException, LibroRepetidoException {
+		Libro libro = buscarLibroPorISBN(isbn);
+		Usuario usuario = buscarUsuarioPorDni(dni);
+		
+		if(libro == null) {
+			throw new LibroNoEncontradoException("Libro es null");
+		}
+		
+		if(libro.getEstaDisponible() == false) {
+			throw new LibroRepetidoException("Libro no disponible");
+		}
+		
+		
+		if(usuario == null) {
+			throw new UsuarioNoEncontradoException("Usuario es null");
+		}
+		
+		Prestamo nuevoPrestamo = new Prestamo(libro, usuario, fechaInicio, null, diasPrestamo);
+		libro.setEstaDisponible(false);
+		return prestamos.add(nuevoPrestamo);	
+	}
+
+
 
 	
 
